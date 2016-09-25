@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block title %}{% trans %}Games{% endtrans %}{% endblock %}
+
+{% block header %}
+<ol class="breadcrumb">
+    <li><a href="{{ url_for('games.index') }}">Games</a></li>
+    <li class="active">Game {{ game.id }}</li>
+</ol>
+
+{% set opponent = game.get_opponent() %}
+{% set state = game.get_state() %}
+
+<h3>Game {{ game.id }} against {% if opponent %}{{ opponent.username }}{% else %}No opponent yet!{% endif %}  {% if state == 'Pending' %}<span class="label label-warning">Pending</span>{% else %}<span class="label label-success">Completed</span>{% endif %}</h3>
+{% endblock %}
+
+{% block body %}
+
+    {% set opponent_time = game.get_opponent_time() %}
+    {% if opponent_time %}
+        <p>Your opponent's reaction time was <strong>{{ opponent_time }} secs</strong>.</p>
+    {% else %}
+        <p>Your opponent has not played yet.</p>
+    {% endif %}
+
+    {% set player_time = game.get_player_time() %}
+    <p>Your reaction time was <strong>{{ player_time }} secs</strong>.</p>
+
+    {% set outcome = game.get_outcome() %}
+    {% if outcome ==  'Win'%}
+        <h3>You won!</h3>
+    {% elif outcome == 'Loss' %}
+        <h3>You lost!</h3>
+    {% elif outcome == 'Tied!' %}
+        <h3>It was a tie!</h3>
+    {% else %}
+        <h3>Still waiting for opponent, check back later!</h3>
+    {% endif %}
+{% endblock %}

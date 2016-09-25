@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+
+{% block title %}{% trans %}Games{% endtrans %}{% endblock %}
+
+{% block header %}
+<ol class="breadcrumb">
+    <li class="active">Games</li>
+</ol>
+<h3 style='display:inline-block'>Create games here!</h3>
+<a style='float:right; display:inline-block; margin:20px' class="btn btn-success" data-toggle="modal" role="button" href="{{ url_for('games.create_game') }}">Create Game</a>
+{% endblock %}
+
+{% block body %}
+    {% if games %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Current Games</h4>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Created Time</th>
+                            <th>Opponent</th>
+                            <th>Your Time</th>
+                            <th>Opponent's Time</th>
+                            <th>State</th>
+                            <th>Outcome</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for game in games %}
+                            <tr>
+                                <td>{{ timeago(game.created_ts) }}</td>
+                                <td>
+                                    {% set opponent = game.get_opponent() %}
+                                    {% if opponent %}
+                                        {{ opponent.username }}
+                                    {% else %}
+                                        No opponent yet!
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% set player_time = game.get_player_time() %}
+                                    {% if player_time %}
+                                        {{ player_time }} secs
+                                    {% else %}
+                                        <em>Waiting for you...</em>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% set opponent_time = game.get_opponent_time() %}
+                                    {% if opponent_time %}
+                                        {{ opponent_time }} secs
+                                    {% else %}
+                                        <em>Waiting for your opponent...</em>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% set state = game.get_state() %}
+                                    {% if state == 'Pending' %}
+                                        <span class="label label-warning">{{ state }}</span>
+                                    {% elif state == 'Completed' %}
+                                        <span class="label label-info">{{ state }}</span>
+                                    {% else %}
+                                        <span class="label label-default">{{ state }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% set outcome = game.get_outcome() %}
+                                    {% if outcome == 'Win' %}
+                                        <span class="label label-success">{{ outcome }}</span>
+                                    {% elif outcome == 'Loss' %}
+                                        <span class="label label-danger">{{ outcome }}</span>
+                                    {% elif outcome == 'Tied!' %}
+                                        <span class="label label-warning">{{ outcome }}</span>
+                                    {% elif outcome == 'No contest!' %}
+                                        <span class="label label-info">{{ outcome }}</span>
+                                    {% else %}
+                                        <span class="label label-default">{{ outcome }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if state == 'Pending' and not player_time %}
+                                        <a class="btn btn-primary" role="button" href="{{ url_for('games.play_game', game_id=game.id) }}">Play Game!</a>
+                                    {% else %}
+                                        <a class="btn btn-default" role="button" href="{{ url_for('games.play_game', game_id=game.id) }}">View Result</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-footer">
+            </div>
+        </div>
+    {% else %}
+        <p><em>No games to display.</em></p>
+    {% endif %}
+
+{% endblock %}

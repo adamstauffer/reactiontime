@@ -1,0 +1,48 @@
+{% extends "games.html" %}
+{% from 'components/field.html' import render_field %}
+
+{% block body %}
+<script>
+    $(document).ready(function() {
+        $('#createGameModal').modal('show');
+});
+</script>
+<div class="modal fade" id="createGameModal" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close"
+                   data-dismiss="modal">
+                       <span aria-hidden="true">&times;</span>
+                       <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    Create Game
+                </h4>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <form id="createGameForm" method="POST" action="{{ url_for('games.create_game') }}">
+                     <div class="form-group">
+                        {{ form.csrf_token }}
+                        {{ render_field(form.player2) }}
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal">
+                            Close
+                </button>
+                <button type="submit" class="btn btn-primary" form="createGameForm">
+                    Create
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

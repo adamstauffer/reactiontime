@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+
+{% block title %}{% trans %}Games{% endtrans %}{% endblock %}
+
+{% block header %}
+<ol class="breadcrumb">
+    <li><a href="{{ url_for('games.index') }}">Games</a></li>
+    <li class="active">Game {{ game.id }}</li>
+</ol>
+
+{% set opponent = game.get_opponent() %}
+
+<h3>Game {{ game.id }} against {% if opponent %}{{ opponent.username }}{% else %}No opponent yet!{% endif %}  <span id="game_status" class="label label-warning">In Progress</span></h3>
+{% endblock %}
+
+{% block body %}
+
+<p>Click on the shape below as quickly as possible to register your score.</p>
+
+{% set opponent_time = game.get_opponent_time() %}
+{% if opponent_time %}
+    <p>Your opponent's reaction time was <strong id="opponent_time">{{ opponent_time }} secs</strong></p>
+{% else %}
+    <p>Your opponent has not played yet.</p>
+{% endif %}
+
+<p id="printReactionTime"></p>
+
+<h3 id='game_result'></h3>
+
+<div id="box" style="width: 100px;height: 100px;background-color: blue;display: none;position: relative;"></div>
+
+<script>
+    function getRandomColor() {
+        var letters = "0123456789ABCDEF".split('');
+        var color = "#";
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.round(Math.random() * 15)];
+        } //ends for loop
+        return color;
+    }
+
+    var clickedTime; var createdTime; var reactionTime;
+
+    function makeBox() {
+        var time=Math.random();
+        time=time*3000;
+
+        setTimeout(
+            function() {
+                if (Math.random()>0.5) {
+                    document.getElementById("box").style.borderRadius="100px";
+                } else {
+                    document.getElementById("box").style.borderRadius="0";
+                }
+                var top= Math.random();
+                top=top*300;
+                var left= Math.random();
+                left=left*500;
+                document.getElementById("box").style.top = top + "px";
+                document.getElementById("box").style.left = left + "px";
+                document.getElementById("box").style.backgroundColor=getRandomColor();
+                document.getElementById("box").style.display="block";
+                createdTime=Date.now();
+            },
+        time);
+    }
+
+    document.getElementById("box").onclick=function() {
+        clickedTime=Date.now();
+        reactionTime=(clickedTime-createdTime)/1000;
+        document.getElementById("printReactionTime").innerHTML="Your Reaction Time is: " + reactionTime + " seconds";
+        Sijax.request('save_time', [reactionTime, {{ game.id }}]);
+        this.style.display="none";
+    }
+    makeBox();
+</script>
+{% endblock %}
