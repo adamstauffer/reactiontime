@@ -32,7 +32,7 @@
                     <tbody>
                         {% for game in games %}
                             <tr>
-                                <td>{{ timeago(game.created_ts) }}</td>
+                                <td>{{ moment(game.created_ts).fromNow() }}</td>
                                 <td>
                                     {% set opponent = game.get_opponent() %}
                                     {% if opponent %}

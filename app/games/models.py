@@ -44,8 +44,17 @@ class Game(db.Model):
     def user_games(cls):
         games = cls.query.filter(db.or_(
             cls.player1 == current_user.id,
-            cls.player2 == current_user.id)).all()
+            cls.player2 == current_user.id)).order_by(
+            cls.created_ts.desc()).all()
         return games
+
+    def get_player1(self):
+        player1 = User.query.filter_by(id=self.player1).first()
+        return player1 if player1 else None
+
+    def get_player2(self):
+        player2 = User.query.filter_by(id=self.player2).first()
+        return player2 if player2 else None
 
     def get_opponent(self):
         if self.player2 is None:

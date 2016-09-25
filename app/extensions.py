@@ -27,3 +27,6 @@ assets = Environment()
 
 from flask.ext.babel import Babel
 babel = Babel()
+
+from flask_moment import Moment
+moment = Moment()

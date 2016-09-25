@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block title %}{% trans %}Games{% endtrans %}{% endblock %}
+
+{% block header %}
+<ol class="breadcrumb">
+    <li><a href="{{ url_for('games.index') }}">Games</a></li>
+    <li class="active">Game {{ game.id }}</li>
+</ol>
+
+{% set player1 = game.get_player1() %}
+{% set player2 = game.get_player2() %}
+{% set state = game.get_state() %}
+
+<h3>Game {{ game.id }} between {{ player1.username }} and {% if player2 %}{{ player2.username }}{% else %}no opponent yet!{% endif %}  {% if state == 'Pending' %}<span class="label label-warning">Pending</span>{% else %}<span class="label label-success">Completed</span>{% endif %}</h3>
+{% endblock %}
+
+{% block body %}
+
+    {% set player1 = game.get_player1() %}
+    {% set player2 = game.get_player2() %}
+
+    {% if game.player1_time %}
+        <p>{{ player1.username }}'s time was <strong>{{ game.player1_time }} secs</strong>.</p>
+    {% else %}
+        <p>{{ player1.username }} has not played yet.</p>
+    {% endif %}
+
+    {% if game.player2_time %}
+        <p>{{ player2.username }}'s time was <strong>{{ game.player2_time }} secs</strong>.</p>
+    {% else %}
+        <p>
+            {% if player2 %}
+                {{ player2.username }} has not played yet.
+            {% else %}
+                The opponent has not played yet.
+            {% endif %}
+        </p>
+    {% endif %}
+
+
+{% endblock %}

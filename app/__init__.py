@@ -2,7 +2,7 @@ from flask import Flask, g, render_template, request
 import flask_sijax
 from app.database import db
 from app.extensions import (
-    lm, api, travis, mail, heroku, bcrypt, celery, babel
+    lm, api, travis, mail, heroku, bcrypt, celery, babel, moment
 )
 from app.assets import assets
 import app.utils as utils
@@ -52,6 +52,7 @@ def register_extensions(app):
     assets.init_app(app)
     babel.init_app(app)
     flask_sijax.Sijax(app)
+    moment.init_app(app)
 
 
 def register_blueprints(app):
@@ -71,4 +72,3 @@ def register_errorhandlers(app):
 
 def register_jinja_env(app):
     app.jinja_env.globals['url_for_other_page'] = utils.url_for_other_page
-    app.jinja_env.globals['timeago'] = utils.timeago

@@ -14,7 +14,7 @@
                     <tr>
                         <td><a href="{{ url_for('.edit', id=u.id) }}">{{ u.username }}</a></td>
                         <td>{{ u.email }}</td>
-                        <td>{{ timeago(u.created_ts) }}</td>
+                        <td>{{ moment(u.created_ts).format('MMMM Do YYYY, h:mm:ss a') }} ({{ moment(u.created_ts).fromNow() }})</td>
                         <td>{{ u.remote_addr }}</td>
                         <td>
                             {% set dialogue = 'Are you sure you want to delete %s?' % u.username %}

@@ -92,6 +92,10 @@ def create_game():
 @login_required
 def play_game(game_id):
     game = Game.query.filter_by(id=game_id).first_or_404()
+
+    if game.player1 != current_user.id and game.player2 != current_user.id:
+        return render_template('not_user_game.html', game=game)
+
     if game.state == GameState.COMPLETED or (
             game.state == GameState.PENDING and
             game.get_player_time() is not None):
